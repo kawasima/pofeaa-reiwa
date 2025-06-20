@@ -16,15 +16,17 @@ public class SupplierMapper {
         return new Supplier(
                 id,
                 record.get("name", String.class),
-                new VirtualList<>(new ProductLoader(id))
+                new VirtualList<>(new ProductLoader(id, ctx))
         );
     }
 
     public static class ProductLoader implements VirtualListLoader<Product> {
         private final Long id;
+        private final DSLContext ctx;
 
-        public ProductLoader(Long id) {
+        public ProductLoader(Long id, DSLContext ctx) {
             this.id = id;
+            this.ctx = ctx;
         }
 
         @Override

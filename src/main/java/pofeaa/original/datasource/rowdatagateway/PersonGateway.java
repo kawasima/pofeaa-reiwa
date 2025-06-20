@@ -7,7 +7,7 @@ import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
 public class PersonGateway {
-    private DSLContext ctx;
+    private final DSLContext ctx;
 
     public PersonGateway(DSLContext ctx) {
         this.ctx = ctx;

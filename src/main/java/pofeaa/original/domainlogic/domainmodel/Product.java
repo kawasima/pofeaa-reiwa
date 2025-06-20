@@ -13,6 +13,10 @@ public class Product {
         recognitionStrategy.calculateRevenueRecognitions(contract);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public static Product newWordProcessor(String name) {
         return new Product(name, new CompleteRecognitionStrategy());
     }

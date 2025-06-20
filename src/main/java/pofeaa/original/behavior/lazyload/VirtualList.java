@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 /**
  * Thread-safe implementation of a virtual list that lazily loads its contents.
  * Uses AtomicReference with lazy initialization for modern thread-safe implementation.
- * 
+ * <br/>
  * Note: This class ensures thread-safe lazy loading, but the thread-safety of
  * list operations depends on the implementation returned by the loader.
  * For full thread-safety, the loader should return a synchronized list.

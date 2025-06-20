@@ -4,10 +4,11 @@ import org.jooq.DSLContext;
 
 import java.util.List;
 
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
 public class ProductMapper {
-    private DSLContext ctx;
+    private final DSLContext ctx;
 
     public ProductMapper(DSLContext ctx) {
         this.ctx = ctx;
@@ -20,7 +21,7 @@ public class ProductMapper {
     public List<Product> findForSupplier(Long supplierId) {
         return ctx.select()
                 .from(table("products"))
-                .where("supplier_id = ?", supplierId)
+                .where(field("supplier_id").eq(supplierId))
                 .fetch()
                 .map(record -> new Product(
                 ));

@@ -10,7 +10,7 @@ import static org.jooq.impl.DSL.*;
 
 public class V1__CreateUser extends BaseJavaMigration {
     @Override
-    public void migrate(Context context) throws Exception {
+    public void migrate(Context context) {
         DSLContext dsl = DSL.using(context.getConnection());
         
         dsl.createTable("users")

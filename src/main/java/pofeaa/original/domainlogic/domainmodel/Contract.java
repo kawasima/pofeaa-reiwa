@@ -2,6 +2,7 @@ package pofeaa.original.domainlogic.domainmodel;
 
 import pofeaa.original.base.money.Money;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,13 @@ public class Contract {
 
     public void calculateRecognitions() {
         product.calculateRevenueRecognitions(this);
+    }
+
+    public Money recognizedRevenue(LocalDate asOf) {
+        return revenueRecognitions.stream()
+                .filter(rr -> rr.isRecognizableBy(asOf))
+                .map(RevenueRecognition::getAmount)
+                .reduce(Money.dollars(BigDecimal.ZERO), Money::add);
     }
 
     public void addRevenueRecognition(RevenueRecognition revenueRecognition) {

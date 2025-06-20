@@ -2,21 +2,19 @@ package pofeaa.original.domainlogic.tablemodule;
 
 import org.jooq.DSLContext;
 
-import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
 
-public class Product {
-    private final DSLContext ctx;
-
+public class Product extends TableModule {
     public Product(DSLContext ctx) {
-        this.ctx = ctx;
+        super(table("products"), ctx);
+    }
+
+    public String getName(long id) {
+        return find(id).getValue("NAME", String.class);
     }
 
     public ProductType getProductType(long id) {
-        return ctx.select(field("type"))
-           .from(table("products"))
-           .where(field("id").eq(id))
-           .fetchOne()
-           .map(record -> ProductType.valueOf(record.get("type", String.class)));
+        String type = find(id).getValue("TYPE", String.class);
+        return ProductType.fromCode(type);
     }
 }

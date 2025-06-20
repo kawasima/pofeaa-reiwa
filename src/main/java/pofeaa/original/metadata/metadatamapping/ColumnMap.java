@@ -2,13 +2,13 @@ package pofeaa.original.metadata.metadatamapping;
 
 import java.lang.reflect.Field;
 
-public class ColumnMap {
-    private String columnName;
-    private String fieldName;
+public class ColumnMap<T> {
+    private final String columnName;
+    private final String fieldName;
     private Field field;
-    private DataMap dataMap;
+    private final DataMap dataMap;
 
-    public ColumnMap(String columnName, String fieldName, DataMap dataMap) {
+    public <S> ColumnMap(String columnName, String fieldName, DataMap<S> dataMap) {
         this.columnName = columnName;
         this.fieldName = fieldName;
         this.dataMap = dataMap;
@@ -26,5 +26,13 @@ public class ColumnMap {
 
     public String getColumnName() {
         return columnName;
+    }
+
+    public void setField(T domainObject, Object value) {
+        try {
+            field.set(domainObject, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot set field " + fieldName + " on class " + dataMap.getDomainClass().getName(), e);
+        }
     }
 }

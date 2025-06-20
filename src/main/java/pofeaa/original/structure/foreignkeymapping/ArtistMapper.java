@@ -3,6 +3,9 @@ package pofeaa.original.structure.foreignkeymapping;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.table;
+
 public class ArtistMapper extends AbstractMapper<Artist> {
     public ArtistMapper(DSLContext ctx) {
         super(ctx);
@@ -10,7 +13,7 @@ public class ArtistMapper extends AbstractMapper<Artist> {
 
     @Override
     protected String findStatement() {
-        return "SELECT * FROM artist WHERE id = ?";
+        return "SELECT * FROM artists WHERE id = ?";
     }
 
     @Override
@@ -21,6 +24,10 @@ public class ArtistMapper extends AbstractMapper<Artist> {
     }
 
     public Artist find(Long id) {
-        return abstractFind(id);
+        Record record = ctx.select()
+                .from(table("artists"))
+                .where(field("id").eq(id))
+                .fetchOne();
+        return doLoad(id, record);
     }
 }

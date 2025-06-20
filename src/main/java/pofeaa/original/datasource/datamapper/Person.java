@@ -2,14 +2,13 @@ package pofeaa.original.datasource.datamapper;
 
 /**
  * Person Domain Class.
- *
  * This class is always valid.
  */
 public class Person {
-    private Identity id;
-    private String firstName;
-    private String lastName;
-    private Integer numberOfDependents;
+    private final Identity id;
+    private final String firstName;
+    private final String lastName;
+    private final Integer numberOfDependents;
 
     public Person(Identity id, String firstName, String lastName, Integer numberOfDependents) {
         this.id = id;

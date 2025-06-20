@@ -32,19 +32,21 @@ public class Gateway {
     }
 
     public Record findContract(long contractId) {
-        return ctx.select()
-                .from(table("contracts").as("c"))
-                .join(table("products").as("p"))
-                .on(field("c.product_id").eq(field("p.id")))
-                .where(field("id").eq(contractId))
+        return ctx.select(field("revenue"),
+                          field("date_signed"),
+                          field("type"))
+                .from(table("contracts"))
+                .join(table("products"))
+                .on(field("contracts.product_id").eq(field("products.id")))
+                .where(field("contracts.id").eq(contractId))
                 .fetchOne();
     }
 
-    public void insertRecognition(long contractId, Money amount, LocalDate asof) {
+    public void insertRecognition(long contractId, Money amount, LocalDate asOf) {
         ctx.insertInto(table("revenue_recognitions"))
                 .set(field("contract_id"), contractId)
                 .set(field("amount"), amount.amount())
-                .set(field("recognized_on"), asof)
+                .set(field("recognized_on"), asOf)
                 .execute();
     }
 }

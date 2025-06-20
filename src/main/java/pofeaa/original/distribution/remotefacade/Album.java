@@ -1,6 +1,5 @@
 package pofeaa.original.distribution.remotefacade;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Album {

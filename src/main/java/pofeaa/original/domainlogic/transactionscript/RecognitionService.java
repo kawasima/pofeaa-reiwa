@@ -15,9 +15,9 @@ public class RecognitionService {
         this.gateway = gateway;
     }
 
-    public Money recognizedRevenue(long contractNumber, LocalDate asof) {
+    public Money recognizedRevenue(long contractNumber, LocalDate asOf) {
         Currency currency = Currency.getInstance(Locale.US);
-        return gateway.findRecognitionsFor(contractNumber, asof)
+        return gateway.findRecognitionsFor(contractNumber, asOf)
                 .stream()
                 .map(amount -> new Money(amount.doubleValue(), currency))
                 .reduce(Money.dollars(BigDecimal.ZERO), Money::add);
@@ -30,16 +30,16 @@ public class RecognitionService {
         String type = contract.get("type", String.class);
 
         switch(type) {
-            case "S": {
+            case "S" -> {
                 Money[] allocation = totalRevenue.allocate(3);
                 gateway.insertRecognition(contractNumber, allocation[0], recognitionDate);
                 gateway.insertRecognition(contractNumber, allocation[1], recognitionDate.plusDays(60));
-                gateway.insertRecognition(contractNumber, allocation[2], recognitionDate.plusDays(120));
+                gateway.insertRecognition(contractNumber, allocation[2], recognitionDate.plusDays(90));
             }
-            case "W": {
+            case "W" -> {
                 gateway.insertRecognition(contractNumber, totalRevenue, recognitionDate);
             }
-            case "D": {
+            case "D" -> {
                 Money[] allocation = totalRevenue.allocate(3);
                 gateway.insertRecognition(contractNumber, allocation[0], recognitionDate);
                 gateway.insertRecognition(contractNumber, allocation[1], recognitionDate.plusDays(30));

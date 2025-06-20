@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapperRegistry {
-    private Map<Class<?>, DataMapper<?>> mappers = new HashMap<>();
+    private final Map<Class<?>, DataMapper<?>> mappers = new HashMap<>();
 
     public <T> void registerMapper(Class<? extends T> clazz, DataMapper<T> mapper) {
         mappers.put(clazz, mapper);// Register the mapper with the given name
