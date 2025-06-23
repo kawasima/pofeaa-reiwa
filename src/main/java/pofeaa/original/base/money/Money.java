@@ -15,6 +15,7 @@ import java.util.Locale;
  * @author Martin Fowler
  */
 public class Money {
+    public static final Money ZERO = new Money(0, Currency.getInstance(Locale.US), true);
     private final long amount;
     private final Currency currency;
 
@@ -109,6 +110,49 @@ public class Money {
     }
 
     /**
+     * Subtracts another Money object from this one.
+     * Both Money objects must have the same currency.
+     * 
+     * @param other the Money to subtract
+     * @return a new Money object representing the difference
+     * @throws IllegalArgumentException if the currencies don't match
+     */
+    public Money subtract(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Cannot subtract Money with different currencies");
+        }
+        return new Money(this.amount - other.amount, this.currency, true);
+    }
+
+    /**
+     * Multiplies this Money amount by a BigDecimal factor.
+     * 
+     * @param other the factor to multiply by
+     * @return a new Money object representing the product
+     * @throws IllegalArgumentException if the factor is null
+     */
+    public Money multiply(BigDecimal other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot multiply Money by null");
+        }
+        
+        // Multiply the amount in smallest units (e.g., cents) by the factor
+        // Use BigDecimal arithmetic for precision, then round to nearest long
+        BigDecimal result = BigDecimal.valueOf(this.amount).multiply(other);
+        long newAmount = result.setScale(0, java.math.RoundingMode.HALF_UP).longValue();
+        
+        return new Money(newAmount, this.currency, true);
+    }
+    /**
+     * Checks if this Money amount is positive or zero.
+     * 
+     * @return true if the amount is greater than or equal to zero, false otherwise
+     */
+    public boolean isPositiveOrZero() {
+        return amount >= 0;
+    }
+
+    /**
      * Allocates this Money equally among n recipients.
      * Any remainder from the division is distributed one cent at a time
      * to the first recipients.
@@ -198,4 +242,5 @@ public class Money {
     public String toString() {
         return String.format("%s %s", amount(), currency.getSymbol());
     }
+
 }

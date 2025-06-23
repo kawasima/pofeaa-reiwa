@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnitOfWork {
+    private static final ThreadLocal<UnitOfWork> current = new ThreadLocal<>();
     private final MapperRegistry mapperRegistry;
 
     private final List<Object> newObjects = new ArrayList<>();
@@ -12,6 +13,22 @@ public class UnitOfWork {
 
     public UnitOfWork(MapperRegistry mapperRegistry) {
         this.mapperRegistry = mapperRegistry;
+    }
+
+    public static void newCurrent(MapperRegistry mapperRegistry) {
+        setCurrent(new UnitOfWork(mapperRegistry));
+    }
+
+    public static void setCurrent(UnitOfWork unitOfWork) {
+        current.set(unitOfWork);
+    }
+
+    public static UnitOfWork getCurrent() {
+        UnitOfWork unitOfWork = current.get();
+        if (unitOfWork == null) {
+            throw new IllegalStateException("No current UnitOfWork found. Did you call newCurrent()?");
+        }
+        return unitOfWork;
     }
 
     public void registerNew(Object object) {
