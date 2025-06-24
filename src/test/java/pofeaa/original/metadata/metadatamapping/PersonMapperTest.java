@@ -19,8 +19,9 @@ class PersonMapperTest {
     @BeforeEach
     void setup() {
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        ds.setURL("jdbc:h2:mem:metadatamapping_test;DB_CLOSE_DELAY=-1");
         ctx = DSL.using(ds, SQLDialect.H2);
+        ctx.dropTableIfExists(table("persons")).execute();
         ctx.createTable(table("persons"))
                 .column(field("id", SQLDataType.BIGINT.identity(true)))
                 .column(field("first_name", SQLDataType.VARCHAR(255)))

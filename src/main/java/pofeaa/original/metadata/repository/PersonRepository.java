@@ -18,14 +18,16 @@ public class PersonRepository {
     public List<Person> dependentsOf(Person person) {
         return ctx.select()
                 .from(table("persons"))
-                .where(field("benefactor_id").eq(person.getId()))
+                .where(field("benefactor_id").eq(person.getId().getValue()))
                 .fetch()
-                .map(record ->
-                    new Person(
-                            Identity.of(record.get("id", Long.class)),
-                            record.get("first_name", String.class),
-                            record.get("last_name", String.class),
-                            record.get("number_of_dependents", Integer.class))
-                );
+                .map(record -> {
+                    Integer numDependents = record.getValue(3, Integer.class);
+                    return new Person(
+                            Identity.of(record.getValue(0, Long.class)),
+                            record.getValue(1, String.class),
+                            record.getValue(2, String.class),
+                            numDependents != null ? numDependents : 0
+                    );
+                });
     }
 }

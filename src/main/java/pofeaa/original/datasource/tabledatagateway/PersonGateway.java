@@ -1,7 +1,6 @@
 package pofeaa.original.datasource.tabledatagateway;
 
 import org.jooq.DSLContext;
-import org.jooq.Record;
 
 import java.util.List;
 
@@ -21,23 +20,21 @@ public class PersonGateway {
                 .fetch()
                 .map(record -> {
                     Person person = new Person();
-                    person.setId(record.get("id", Long.class));
-                    person.setFirstName(record.get("first_name", String.class));
-                    person.setLastName(record.get("last_name", String.class));
-                    person.setNumberOfDependents(record.get("number_of_dependents", Integer.class));
+                    // Use getValue with index to avoid field name case issues
+                    person.setId(record.getValue(0, Long.class));
+                    person.setFirstName(record.getValue(1, String.class));
+                    person.setLastName(record.getValue(2, String.class));
+                    person.setNumberOfDependents(record.getValue(3, Integer.class));
                     return person;
                 });
     }
 
     public void update(Person person) {
-        Record record = ctx.newRecord(table("persons"));
-        record.set(field("first_name"), person.getFirstName());
-        record.set(field("last_name"), person.getLastName());
-        record.set(field("number_of_dependents"), person.getNumberOfDependents());
-
         ctx.update(table("persons"))
-                .set(record)
-                .where("id = ?", person.getId())
+                .set(field("first_name"), person.getFirstName())
+                .set(field("last_name"), person.getLastName())
+                .set(field("number_of_dependents"), person.getNumberOfDependents())
+                .where(field("id").eq(person.getId()))
                 .execute();
     }
 }

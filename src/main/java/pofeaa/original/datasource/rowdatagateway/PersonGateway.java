@@ -71,14 +71,16 @@ public class PersonGateway {
         Registry.addPerson(this);
     }
 
-    public static PersonGateway load(DSLContext ctx, Record recrod) {
-        PersonGateway person = Registry.getPerson(recrod.get("id", Long.class));
+    public static PersonGateway load(DSLContext ctx, Record record) {
+        // Use getValue with index to avoid field name case issues
+        Long id = record.getValue(0, Long.class);
+        PersonGateway person = Registry.getPerson(id);
         if (person == null) {
             person = new PersonGateway(ctx);
-            person.setId(recrod.get("id", Long.class));
-            person.setFirstName(recrod.get("first_name", String.class));
-            person.setLastName(recrod.get("last_name", String.class));
-            person.setNumberOfDependents(recrod.get("number_of_dependents", Integer.class));
+            person.setId(id);
+            person.setFirstName(record.getValue(1, String.class));
+            person.setLastName(record.getValue(2, String.class));
+            person.setNumberOfDependents(record.getValue(3, Integer.class));
             Registry.addPerson(person);
         }
         return person;

@@ -13,4 +13,8 @@ public class Registry {
     public static void addPerson(PersonGateway person) {
         personRegistry.put(person.getId(), person);
     }
+
+    public static void clear() {
+        personRegistry.clear();
+    }
 }
