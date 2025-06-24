@@ -1,5 +1,7 @@
 # PofEAA REIWA edition
 
+[日本語版 README](README.ja.md)
+
 A modern Java implementation of the patterns from Martin Fowler's "Patterns of Enterprise Application Architecture" (PofEAA), updated for contemporary development practices.
 
 ## Overview
