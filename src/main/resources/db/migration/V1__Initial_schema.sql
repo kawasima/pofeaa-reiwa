@@ -1,5 +1,4 @@
--- Schema creation script for jOOQ code generation
--- Based on DbSetup.java
+-- Initial schema for PofEAA Reiwa project
 
 -- Accounts table
 CREATE TABLE IF NOT EXISTS accounts (

@@ -148,4 +148,157 @@ class PersonFinderTest {
         // Then the list should be empty
         assertThat(responsibles).isNotNull().isEmpty();
     }
+
+    @Test
+    void testFindResponsiblesLoadsIntoRegistry() {
+        // Clear registry to ensure fresh start
+        Registry.clear();
+        
+        // When finding responsible persons
+        List<PersonGateway> responsibles = personFinder.findResponsibles();
+        
+        // Then all loaded persons should be in the registry
+        assertThat(responsibles).hasSize(2);
+        
+        for (PersonGateway person : responsibles) {
+            PersonGateway cached = Registry.getPerson(person.getId());
+            assertThat(cached).isSameAs(person);
+        }
+    }
+
+    @Test
+    void testFindResponsiblesWithEmptyTable() {
+        // Clear all data
+        ctx.deleteFrom(table("persons")).execute();
+        
+        // When finding responsible persons on empty table
+        List<PersonGateway> responsibles = personFinder.findResponsibles();
+        
+        // Then should return empty list, not null
+        assertThat(responsibles).isNotNull().isEmpty();
+    }
+
+    @Test
+    void testFindResponsiblesOrder() {
+        // Add more test data with specific order
+        ctx.insertInto(table("persons"))
+                .set(field("first_name"), "Zoe")
+                .set(field("last_name"), "Williams")
+                .set(field("number_of_dependents"), 1)
+                .execute();
+        
+        // When finding responsible persons
+        List<PersonGateway> responsibles = personFinder.findResponsibles();
+        
+        // Then verify all persons with dependents are returned
+        assertThat(responsibles).hasSize(3);
+        assertThat(responsibles)
+            .extracting(PersonGateway::getNumberOfDependents)
+            .allMatch(deps -> deps > 0);
+    }
+
+    @Test
+    void testFindWithNullId() {
+        // When finding with null ID
+        // Then should throw exception
+        assertThatThrownBy(() -> personFinder.find(null))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void testConcurrentFindSamePersonUsesRegistry() {
+        // Clear registry
+        Registry.clear();
+        
+        // First load
+        PersonGateway first = personFinder.find(1L);
+        assertThat(first).isNotNull();
+        
+        // Second load of same person should return same instance
+        PersonGateway second = personFinder.find(1L);
+        assertThat(second).isSameAs(first);
+        
+        // Verify only one instance exists in registry
+        assertThat(Registry.getPerson(1L)).isSameAs(first);
+    }
+
+    @Test
+    void testFindPersonWithNegativeDependents() {
+        // Insert person with negative dependents
+        ctx.insertInto(table("persons"))
+                .set(field("first_name"), "Test")
+                .set(field("last_name"), "Negative")
+                .set(field("number_of_dependents"), -1)
+                .execute();
+        
+        Long negativeId = ctx.select(field("id", Long.class))
+                .from(table("persons"))
+                .where(field("first_name").eq("Test"))
+                .fetchOne()
+                .value1();
+        
+        // Should still be able to find the person
+        PersonGateway person = personFinder.find(negativeId);
+        assertThat(person).isNotNull();
+        assertThat(person.getNumberOfDependents()).isEqualTo(-1);
+        
+        // But should not be included in responsibles
+        List<PersonGateway> responsibles = personFinder.findResponsibles();
+        assertThat(responsibles)
+            .extracting(PersonGateway::getFirstName)
+            .doesNotContain("Test");
+    }
+
+    @Test
+    void testFindPersonWithNullDependents() {
+        // Insert person with null dependents
+        ctx.insertInto(table("persons"))
+                .set(field("first_name"), "Null")
+                .set(field("last_name"), "Deps")
+                .setNull(field("number_of_dependents"))
+                .execute();
+        
+        Long nullDepsId = ctx.select(field("id", Long.class))
+                .from(table("persons"))
+                .where(field("first_name").eq("Null"))
+                .fetchOne()
+                .value1();
+        
+        // Should be able to find the person
+        PersonGateway person = personFinder.find(nullDepsId);
+        assertThat(person).isNotNull();
+        assertThat(person.getNumberOfDependents()).isNull();
+        
+        // Should not be included in responsibles (null is not > 0)
+        List<PersonGateway> responsibles = personFinder.findResponsibles();
+        assertThat(responsibles)
+            .extracting(PersonGateway::getFirstName)
+            .doesNotContain("Null");
+    }
+
+    @Test
+    void testFindResponsiblesWithLargeDependentCount() {
+        // Insert person with large number of dependents
+        ctx.insertInto(table("persons"))
+                .set(field("first_name"), "Large")
+                .set(field("last_name"), "Family")
+                .set(field("number_of_dependents"), 999)
+                .execute();
+        
+        // When finding responsible persons
+        List<PersonGateway> responsibles = personFinder.findResponsibles();
+        
+        // Then person with large family should be included
+        assertThat(responsibles)
+            .extracting(PersonGateway::getFirstName)
+            .contains("Large");
+        
+        PersonGateway largeFamily = responsibles.stream()
+            .filter(p -> "Large".equals(p.getFirstName()))
+            .findFirst()
+            .orElse(null);
+        
+        assertThat(largeFamily).isNotNull();
+        assertThat(largeFamily.getNumberOfDependents()).isEqualTo(999);
+    }
 }

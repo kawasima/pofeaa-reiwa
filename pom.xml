@@ -14,6 +14,14 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <yavi.version>0.16.0</yavi.version>
+        <spring-boot.version>3.5.0</spring-boot.version>
+        <h2.version>2.3.232</h2.version>
+        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <flyway.version>11.7.2</flyway.version>
+        <jooq.version>3.19.10</jooq.version>
+
+        <generate-schema.url>jdbc:h2:./target/jooq-codegen;AUTO_SERVER=TRUE</generate-schema.url>
     </properties>
 
     <dependencyManagement>
@@ -21,7 +29,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.5.0</version>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -32,7 +40,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.3.232</version>
+            <version>${h2.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -73,7 +81,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -91,7 +99,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <org.jooq.no-logo>true</org.jooq.no-logo>
@@ -100,40 +108,37 @@
                 </configuration>
             </plugin>
             
-            <!-- SQL Plugin to initialize database for jOOQ generation -->
+            <!-- Flyway Plugin to initialize database for jOOQ generation -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sql-maven-plugin</artifactId>
-                <version>1.5</version>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
                 
                 <dependencies>
                     <dependency>
                         <groupId>com.h2database</groupId>
                         <artifactId>h2</artifactId>
-                        <version>2.3.232</version>
+                        <version>${h2.version}</version>
                     </dependency>
                 </dependencies>
                 
                 <configuration>
                     <driver>org.h2.Driver</driver>
-                    <url>jdbc:h2:./target/jooq-codegen;AUTO_SERVER=TRUE</url>
-                    <username>sa</username>
+                    <url>${generate-schema.url}</url>
+                    <user>sa</user>
                     <password></password>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
                 </configuration>
                 
                 <executions>
                     <execution>
-                        <id>create-schema</id>
+                        <id>flyway-migrate</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>execute</goal>
+                            <goal>migrate</goal>
                         </goals>
-                        <configuration>
-                            <autocommit>true</autocommit>
-                            <srcFiles>
-                                <srcFile>src/main/resources/jooq-codegen-schema.sql</srcFile>
-                            </srcFiles>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -142,7 +147,7 @@
             <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
-                <version>3.19.10</version>
+                <version>${jooq.version}</version>
                 
                 <executions>
                     <execution>
@@ -154,15 +159,13 @@
                         <configuration>
                             <jdbc>
                                 <driver>org.h2.Driver</driver>
-                                <url>jdbc:h2:./target/jooq-codegen;AUTO_SERVER=TRUE</url>
+                                <url>${generate-schema.url}</url>
                                 <user>sa</user>
-                                <password></password>
                             </jdbc>
                             <generator>
                                 <database>
                                     <name>org.jooq.meta.h2.H2Database</name>
-                                    <includes>ACCOUNTS|ACTIVITIES</includes>
-                                    <excludes></excludes>
+                                    <excludes>FLYWAY_SCHEMA_HISTORY</excludes>
                                     <inputSchema>PUBLIC</inputSchema>
                                 </database>
                                 <generate>
@@ -185,9 +188,37 @@
                     <dependency>
                         <groupId>com.h2database</groupId>
                         <artifactId>h2</artifactId>
-                        <version>2.3.232</version>
+                        <version>${h2.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            
+            <!-- Clean Plugin to remove H2 database files after generation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <executions>
+                    <execution>
+                        <id>clean-jooq-database</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.basedir}/target</directory>
+                                    <includes>
+                                        <include>jooq-codegen.mv.db</include>
+                                        <include>jooq-codegen.trace.db</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
