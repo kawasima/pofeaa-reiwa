@@ -72,7 +72,7 @@ class TableDataGatewayAccountTest {
 
         // Then - Result contains zero or one record
         assertThat(result).hasSize(1);
-        AccountsRecord record = result.get(0);
+        AccountsRecord record = result.getFirst();
         assertThat(record.getId()).isEqualTo(1L);
         assertThat(record.getBaselineBalance()).isEqualTo(new BigDecimal("1000.00"));
         assertThat(record.getAccountType()).isEqualTo("SAVING");
@@ -181,7 +181,7 @@ class TableDataGatewayAccountTest {
         assertThat(inserted).isEqualTo(1);
         Result<AccountsRecord> result = accountGateway.find(6L);
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCurrency()).isEqualTo("GBP");
+        assertThat(result.getFirst().getCurrency()).isEqualTo("GBP");
     }
 
     @Test

@@ -84,7 +84,7 @@ class CheckingAccountTest {
             // Should only have withdrawal activity, no transaction fee
             List<Activity> activities = account.getActivityWindow().getActivities();
             assertThat(activities).hasSize(1);
-            assertThat(activities.get(0).getMoney()).isEqualTo(withdrawalAmount);
+            assertThat(activities.getFirst().getMoney()).isEqualTo(withdrawalAmount);
         }
 
         @Test

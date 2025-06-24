@@ -12,10 +12,10 @@ import static pofeaa.combination.transactionscript.generated.Tables.ACCOUNTS;
 
 /**
  * Table Data Gateway implementation for Account operations using jOOQ generated classes.
- * 
+ * <br/>
  * This gateway provides methods to perform database operations on the accounts table,
  * following the Table Data Gateway pattern from Martin Fowler's PoEAA.
- * 
+ * <br/>
  * Key characteristics:
  * - One instance handles all rows in the accounts table
  * - Methods return RecordSets (Result<AccountsRecord> in jOOQ)
@@ -231,9 +231,10 @@ public class AccountGateway {
      * @return Total count
      */
     public int count() {
-        return ctx.selectCount()
+        Integer result = ctx.selectCount()
                 .from(accountsTable)
-                .fetchOne(0, int.class);
+                .fetchOne(0, Integer.class);
+        return result != null ? result : 0;
     }
     
     /**
@@ -243,10 +244,11 @@ public class AccountGateway {
      * @return Count for the specified type
      */
     public int countByType(String accountType) {
-        return ctx.selectCount()
+        Integer result = ctx.selectCount()
                 .from(accountsTable)
                 .where(accountsTable.ACCOUNT_TYPE.eq(accountType))
-                .fetchOne(0, int.class);
+                .fetchOne(0, Integer.class);
+        return result != null ? result : 0;
     }
     
     /**

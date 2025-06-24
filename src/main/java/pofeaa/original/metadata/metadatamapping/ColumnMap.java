@@ -6,9 +6,9 @@ public class ColumnMap<T> {
     private final String columnName;
     private final String fieldName;
     private Field field;
-    private final DataMap dataMap;
+    private final DataMap<T> dataMap;
 
-    public <S> ColumnMap(String columnName, String fieldName, DataMap<S> dataMap) {
+    public ColumnMap(String columnName, String fieldName, DataMap<T> dataMap) {
         this.columnName = columnName;
         this.fieldName = fieldName;
         this.dataMap = dataMap;

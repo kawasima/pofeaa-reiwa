@@ -155,15 +155,12 @@ public class Address {
      * @return Formatted address string
      */
     public String format() {
-        if ("US".equals(countryCode)) {
-            return formatUsAddress();
-        } else if ("GB".equals(countryCode)) {
-            return formatUkAddress();
-        } else if ("JP".equals(countryCode)) {
-            return formatJapaneseAddress();
-        } else {
-            return formatGenericAddress();
-        }
+        return switch (countryCode) {
+            case "US" -> formatUsAddress();
+            case "GB" -> formatUkAddress();
+            case "JP" -> formatJapaneseAddress();
+            case null, default -> formatGenericAddress();
+        };
     }
     
     private String formatUsAddress() {

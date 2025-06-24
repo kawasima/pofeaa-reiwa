@@ -64,7 +64,7 @@ class PersonGatewayTest {
         assertThat(persons).isNotNull().hasSize(3);
         
         // Verify first person
-        Person person1 = persons.get(0);
+        Person person1 = persons.getFirst();
         assertThat(person1.getId()).isEqualTo(1L);
         assertThat(person1.getFirstName()).isEqualTo("John");
         assertThat(person1.getLastName()).isEqualTo("Doe");
@@ -157,7 +157,7 @@ class PersonGatewayTest {
         // Then the person with null values should be handled correctly
         assertThat(persons).isNotNull().hasSize(1);
         
-        Person person = persons.get(0);
+        Person person = persons.getFirst();
         assertThat(person.getFirstName()).isEqualTo("John");
         assertThat(person.getLastName()).isNull();
         assertThat(person.getNumberOfDependents()).isNull();

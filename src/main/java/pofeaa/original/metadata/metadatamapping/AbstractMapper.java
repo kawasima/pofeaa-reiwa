@@ -36,8 +36,6 @@ public abstract class AbstractMapper<T> {
     }
 
     private void loadFields(Record record, T domainObject) {
-        dataMap.getColumns().forEach(column -> {
-            column.setField(domainObject, record.get(column.getColumnName()));
-        });
+        dataMap.getColumns().forEach(column -> column.setField(domainObject, record.get(column.getColumnName())));
     }
 }

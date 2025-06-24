@@ -64,7 +64,7 @@ class PersonRepositoryTest {
         
         // Then one dependent should be found
         assertThat(dependents).hasSize(1);
-        Person dependent = dependents.get(0);
+        Person dependent = dependents.getFirst();
         assertThat(dependent.getId().getValue()).isEqualTo(2L);
         assertThat(dependent.getFirstName()).isEqualTo("Jane");
         assertThat(dependent.getLastName()).isEqualTo("Doe");
@@ -188,7 +188,7 @@ class PersonRepositoryTest {
         List<Person> grandpaDependents = personRepository.dependentsOf(grandpa);
         
         assertThat(grandpaDependents).hasSize(1);
-        assertThat(grandpaDependents.get(0).getFirstName()).isEqualTo("Dad");
+        assertThat(grandpaDependents.getFirst().getFirstName()).isEqualTo("Dad");
         
         // Test Dad's dependents (should be the two children)
         Person dad = new Person(Identity.of(2L), "Dad", "Wilson", 2);
@@ -226,7 +226,7 @@ class PersonRepositoryTest {
         
         // Then dependent should be found with null values handled
         assertThat(dependents).hasSize(1);
-        Person dependent = dependents.get(0);
+        Person dependent = dependents.getFirst();
         assertThat(dependent.getFirstName()).isEqualTo("Jane");
         assertThat(dependent.getLastName()).isNull();
         assertThat(dependent.getNumberOfDependents()).isEqualTo(0); // null converted to 0 by primitive int
@@ -319,6 +319,6 @@ class PersonRepositoryTest {
         List<Person> janeDependents = personRepository.dependentsOf(jane);
         
         assertThat(janeDependents).hasSize(1);
-        assertThat(janeDependents.get(0).getFirstName()).isEqualTo("Jane_Child");
+        assertThat(janeDependents.getFirst().getFirstName()).isEqualTo("Jane_Child");
     }
 }

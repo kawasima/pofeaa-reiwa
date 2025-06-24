@@ -109,7 +109,7 @@ class PersonFinderTest {
         assertThat(responsibles).isNotNull().hasSize(2);
         
         // Verify the correct persons were returned
-        PersonGateway person1 = responsibles.get(0);
+        PersonGateway person1 = responsibles.getFirst();
         assertThat(person1.getFirstName()).isEqualTo("John");
         assertThat(person1.getNumberOfDependents()).isEqualTo(2);
         

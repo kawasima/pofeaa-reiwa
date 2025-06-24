@@ -108,9 +108,9 @@ class ContractTest {
                     .fetch();
 
             assertThat(recognitions).hasSize(1);
-            assertThat(recognitions.get(0).getValue("AMOUNT", BigDecimal.class))
+            assertThat(recognitions.getFirst().getValue("AMOUNT", BigDecimal.class))
                     .isEqualTo(new BigDecimal("1000.00"));
-            assertThat(recognitions.get(0).getValue("RECOGNIZED_ON", LocalDate.class))
+            assertThat(recognitions.getFirst().getValue("RECOGNIZED_ON", LocalDate.class))
                     .isEqualTo(dateSigned.toLocalDate());
         }
 
@@ -136,7 +136,7 @@ class ContractTest {
                     .fetch();
 
             assertThat(recognitions).hasSize(1);
-            assertThat(recognitions.get(0).getValue("AMOUNT", BigDecimal.class))
+            assertThat(recognitions.getFirst().getValue("AMOUNT", BigDecimal.class))
                     .isEqualTo(new BigDecimal("2500.50"));
         }
     }

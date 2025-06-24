@@ -91,10 +91,10 @@ public class AccountMapper {
             
         // Set type-specific fields
         if (account instanceof SavingAccount savingAccount) {
-            insertQuery.set(field("annual_interest_rate"), savingAccount.getAnnualInterestRate());
+            insertQuery = insertQuery.set(field("annual_interest_rate"), savingAccount.getAnnualInterestRate());
         } else if (account instanceof CheckingAccount checkingAccount) {
-            insertQuery.set(field("overdraft_limit"), checkingAccount.getOverdraftLimit().amount());
-            insertQuery.set(field("overdraft_interest_rate"), checkingAccount.getOverdraftInterestRate());
+            insertQuery = insertQuery.set(field("overdraft_limit"), checkingAccount.getOverdraftLimit().amount())
+                    .set(field("overdraft_interest_rate"), checkingAccount.getOverdraftInterestRate());
         }
         
         insertQuery.execute();
@@ -122,13 +122,15 @@ public class AccountMapper {
             
         // Set type-specific fields
         if (account instanceof SavingAccount savingAccount) {
-            updateQuery.set(field("annual_interest_rate"), savingAccount.getAnnualInterestRate());
-            updateQuery.setNull(field("overdraft_limit"));
-            updateQuery.setNull(field("overdraft_interest_rate"));
+            updateQuery = updateQuery
+                    .set(field("annual_interest_rate"), savingAccount.getAnnualInterestRate())
+                    .setNull(field("overdraft_limit"))
+                    .setNull(field("overdraft_interest_rate"));
         } else if (account instanceof CheckingAccount checkingAccount) {
-            updateQuery.setNull(field("annual_interest_rate"));
-            updateQuery.set(field("overdraft_limit"), checkingAccount.getOverdraftLimit().amount());
-            updateQuery.set(field("overdraft_interest_rate"), checkingAccount.getOverdraftInterestRate());
+            updateQuery = updateQuery
+                    .setNull(field("annual_interest_rate"))
+                    .set(field("overdraft_limit"), checkingAccount.getOverdraftLimit().amount())
+                    .set(field("overdraft_interest_rate"), checkingAccount.getOverdraftInterestRate());
         }
         
         updateQuery.where(field("id").eq(accountId)).execute();

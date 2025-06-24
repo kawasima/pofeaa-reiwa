@@ -141,7 +141,7 @@ class DataMapperPatternTest {
 
         // Then - Should return domain objects
         assertThat(activities).hasSize(1);
-        Activity activity = activities.get(0);
+        Activity activity = activities.getFirst();
         assertThat(activity.getOwnerAccountId().asLong()).isEqualTo(1L);
         assertThat(activity.getSourceAccountId().asLong()).isEqualTo(1L);
         assertThat(activity.getTargetAccountId().asLong()).isEqualTo(2L);

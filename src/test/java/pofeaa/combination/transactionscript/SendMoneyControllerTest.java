@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pofeaa.combination.DbSetup;
-import pofeaa.combination.transactionscript.generated.tables.records.AccountsRecord;
 import pofeaa.combination.transactionscript.generated.tables.records.ActivitiesRecord;
 
 import java.math.BigDecimal;
@@ -77,14 +76,14 @@ class SendMoneyControllerTest {
         assertThat(targetActivities).hasSize(1);
         
         // Verify withdrawal activity
-        ActivitiesRecord withdrawal = sourceActivities.get(0);
+        ActivitiesRecord withdrawal = sourceActivities.getFirst();
         assertThat(withdrawal.getOwnerAccountId()).isEqualTo(1L);
         assertThat(withdrawal.getSourceAccountId()).isEqualTo(1L);
         assertThat(withdrawal.getTargetAccountId()).isEqualTo(2L);
         assertThat(withdrawal.getAmount()).isEqualTo(new BigDecimal("100.00"));
         
         // Verify deposit activity
-        ActivitiesRecord deposit = targetActivities.get(0);
+        ActivitiesRecord deposit = targetActivities.getFirst();
         assertThat(deposit.getOwnerAccountId()).isEqualTo(2L);
         assertThat(deposit.getSourceAccountId()).isEqualTo(1L);
         assertThat(deposit.getTargetAccountId()).isEqualTo(2L);

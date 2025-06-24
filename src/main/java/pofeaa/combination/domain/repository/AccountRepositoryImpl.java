@@ -31,8 +31,6 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     public void saveActivities(Account account) {
-        account.getActivityWindow().getActivities().forEach(activity -> {
-            accountMapper.getActivityMapper().insert(activity);
-        });
+        account.getActivityWindow().getActivities().forEach(activity -> accountMapper.getActivityMapper().insert(activity));
     }
 }
