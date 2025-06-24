@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.ServiceLoader;
 import java.util.Iterator;
 import java.util.List;
@@ -39,8 +40,8 @@ class PluginFactoryTest {
             
             // Then
             assertNotNull(plugin);
-            assertTrue(plugin instanceof TestPlugin);
-            assertTrue(plugin instanceof TestPluginImpl);
+            assertInstanceOf(TestPlugin.class, plugin);
+            assertInstanceOf(TestPluginImpl.class, plugin);
             assertEquals("TestPluginImpl", plugin.getName());
         }
     }
@@ -50,7 +51,7 @@ class PluginFactoryTest {
     void shouldThrowExceptionWhenNoServiceImplementationFound() {
         // Given - Mock ServiceLoader with no services
         ServiceLoader<TestPlugin> mockServiceLoader = mock(ServiceLoader.class);
-        Iterator<TestPlugin> emptyIterator = List.<TestPlugin>of().iterator();
+        Iterator<TestPlugin> emptyIterator = Collections.emptyIterator();
         
         when(mockServiceLoader.iterator()).thenReturn(emptyIterator);
         
@@ -109,8 +110,8 @@ class PluginFactoryTest {
             
             // Then
             assertNotNull(plugin);
-            assertTrue(plugin instanceof IdGenerator);
-            assertTrue(plugin instanceof MockIdGenerator);
+            assertInstanceOf(IdGenerator.class, plugin);
+            assertInstanceOf(MockIdGenerator.class, plugin);
             assertEquals(42L, plugin.nextId());
         }
     }
@@ -139,8 +140,8 @@ class PluginFactoryTest {
             IdGenerator idGenerator = PluginFactory.getPlugin(IdGenerator.class);
             
             // Then
-            assertTrue(testPlugin instanceof TestPluginImpl);
-            assertTrue(idGenerator instanceof MockIdGenerator);
+            assertInstanceOf(TestPluginImpl.class, testPlugin);
+            assertInstanceOf(MockIdGenerator.class, idGenerator);
             assertEquals("TestPluginImpl", testPlugin.getName());
             assertEquals(42L, idGenerator.nextId());
         }
