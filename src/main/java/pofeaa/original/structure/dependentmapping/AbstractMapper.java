@@ -16,6 +16,18 @@ public abstract class AbstractMapper<T> {
         this.ctx = ctx;
     }
 
+    /**
+     * Maps a database record to a domain model object with identity management.
+     * 
+     * This method transforms a Record Set (database row) into a domain model instance,
+     * implementing the Identity Map pattern to ensure each database record is loaded
+     * only once per session. If the object with the given ID has already been loaded,
+     * it returns the cached instance instead of creating a new one.
+     * 
+     * @param record the database record containing the data to be mapped, must include an 'id' field
+     * @return the domain model object corresponding to the record, either newly created or 
+     *         retrieved from the identity map
+     */
     protected T load(Record record) {
         Long id = record.get("id", Long.class);
         return loadedMap.computeIfAbsent(id, k -> {

@@ -24,6 +24,18 @@ public abstract class AbstractMapper<T> {
         return load(record);
     }
 
+    /**
+     * Maps a database record to a domain model object.
+     * 
+     * This method performs the transformation from a Record Set (database row) to 
+     * a domain model instance. It creates a new instance of the domain class and 
+     * populates its fields with values from the database record using metadata mapping.
+     * 
+     * @param record the database record containing field values to be mapped
+     * @return a fully populated domain model object with data from the record
+     * @throws RuntimeException if the domain object cannot be instantiated due to
+     *         reflection errors (missing constructor, access restrictions, etc.)
+     */
     public T load(Record record) {
         try {
             @SuppressWarnings("unchecked")

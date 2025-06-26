@@ -1,5 +1,8 @@
 package pofeaa.original.datasource.tabledatagateway;
 
+/**
+ * Type safe representation of a record set.
+ */
 public class Person {
     private Long id;
     private String firstName;
