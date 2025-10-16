@@ -16,12 +16,12 @@ import java.util.Map;
 
 public class UserRegistration {
     public static void main(String[] args) throws Exception {
-        // Derby組み込みDB接続
+        // H2
         String dbUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
         Connection conn = DriverManager.getConnection(dbUrl);
         try (Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(
-                    "CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, password VARCHAR(255))"
+                    "CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, email VARCHAR(255), activated BOOLEAN DEFAULT FALSE)"
             );
         } catch (SQLException e) {
             // すでにテーブルがある場合は無視
@@ -43,6 +43,7 @@ public class UserRegistration {
                     + "<form method='POST' action='/register'>"
                     + "Username: <input name='username'/><br/>"
                     + "Password: <input type='password' name='password'/><br/>"
+                    + "Email: <input name='email'/><br/>"
                     + "<input type='submit' value='Register'/>"
                     + "</form></body></html>";
             sendResponse(exchange, page);
@@ -63,9 +64,10 @@ public class UserRegistration {
                 response = "<html><body><h3>Username and password must not be empty.</h3><a href='/register'>Back</a></body></html>";
             } else {
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO users(username, email) VALUES(?,?)")) {
+                        "INSERT INTO users(username, password, email) VALUES(?,?)")) {
                     ps.setString(1, params.get("username"));
-                    ps.setString(2, params.get("email"));
+                    ps.setString(2, params.get("password"));
+                    ps.setString(3, params.get("email"));
                     ps.executeUpdate();
                     response = "<html><body><h3>Registration successful for user: " + params.get("username") + "</h3><a href='/register'>Register another</a></body></html>";
                 } catch (SQLIntegrityConstraintViolationException e) {

@@ -7,32 +7,29 @@ import java.util.List;
 
 public class SupplierMapper {
     private final DSLContext ctx;
+    private final ProductMapper productMapper;
 
     public SupplierMapper(DSLContext ctx) {
         this.ctx = ctx;
+        this.productMapper = new ProductMapper(ctx);
     }
 
     protected Supplier doLoad(Long id, Record record) {
         return new Supplier(
                 id,
                 record.get("name", String.class),
-                new VirtualList<>(new ProductLoader(id, ctx))
+                new ProductsLoader(id, productMapper)
         );
     }
 
-    public static class ProductLoader implements VirtualListLoader<Product> {
-        private final Long id;
-        private final DSLContext ctx;
-
-        public ProductLoader(Long id, DSLContext ctx) {
-            this.id = id;
-            this.ctx = ctx;
+    public Supplier findById(Long id) {
+        Record record = ctx.select()
+                .from("suppliers")
+                .where("id = ?", id)
+                .fetchOne();
+        if (record == null) {
+            return null;
         }
-
-        @Override
-        public List<Product> load() {
-            return ProductMapper.create(ctx)
-                    .findForSupplier(id);
-        }
+        return doLoad(id, record);
     }
 }

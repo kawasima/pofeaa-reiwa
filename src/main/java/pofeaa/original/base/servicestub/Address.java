@@ -16,7 +16,7 @@ public class Address {
     private final String line2;
     private final String line3;
     private final String city;
-    private final String stateOrProvince;
+    private final String stateCode;
     private final String postalCode;
     private final String country;
     private final String countryCode;
@@ -29,7 +29,7 @@ public class Address {
         this.line2 = builder.line2;
         this.line3 = builder.line3;
         this.city = builder.city;
-        this.stateOrProvince = builder.stateOrProvince;
+        this.stateCode = builder.stateOrProvince;
         this.postalCode = builder.postalCode;
         this.country = builder.country;
         this.countryCode = builder.countryCode;
@@ -132,8 +132,8 @@ public class Address {
         return city;
     }
     
-    public String getStateOrProvince() {
-        return stateOrProvince;
+    public String getStateCode() {
+        return stateCode;
     }
     
     public String getPostalCode() {
@@ -169,8 +169,8 @@ public class Address {
         appendLine(sb, line2);
         appendLine(sb, line3);
         
-        if (city != null && stateOrProvince != null && postalCode != null) {
-            sb.append(city).append(", ").append(stateOrProvince).append(" ").append(postalCode);
+        if (city != null && stateCode != null && postalCode != null) {
+            sb.append(city).append(", ").append(stateCode).append(" ").append(postalCode);
             sb.append("\n");
         }
         
@@ -187,7 +187,7 @@ public class Address {
         appendLine(sb, line2);
         appendLine(sb, line3);
         appendLine(sb, city);
-        appendLine(sb, stateOrProvince); // County
+        appendLine(sb, stateCode); // County
         appendLine(sb, postalCode);
         
         if (!"United Kingdom".equals(country) && country != null) {
@@ -209,7 +209,7 @@ public class Address {
             sb.append(country).append("\n");
         }
         
-        appendWithSpace(sb, stateOrProvince); // Prefecture
+        appendWithSpace(sb, stateCode); // Prefecture
         appendWithSpace(sb, city);
         appendWithSpace(sb, line1);
         
@@ -227,7 +227,7 @@ public class Address {
         appendLine(sb, line2);
         appendLine(sb, line3);
         appendLine(sb, city);
-        appendLine(sb, stateOrProvince);
+        appendLine(sb, stateCode);
         appendLine(sb, postalCode);
         appendLine(sb, country);
         
@@ -281,7 +281,7 @@ public class Address {
                Objects.equals(line2, address.line2) &&
                Objects.equals(line3, address.line3) &&
                Objects.equals(city, address.city) &&
-               Objects.equals(stateOrProvince, address.stateOrProvince) &&
+               Objects.equals(stateCode, address.stateCode) &&
                Objects.equals(postalCode, address.postalCode) &&
                Objects.equals(country, address.country) &&
                Objects.equals(countryCode, address.countryCode);
@@ -289,7 +289,7 @@ public class Address {
     
     @Override
     public int hashCode() {
-        return Objects.hash(line1, line2, line3, city, stateOrProvince, 
+        return Objects.hash(line1, line2, line3, city, stateCode,
                           postalCode, country, countryCode);
     }
     
@@ -300,7 +300,7 @@ public class Address {
                ", line2='" + line2 + '\'' +
                ", line3='" + line3 + '\'' +
                ", city='" + city + '\'' +
-               ", stateOrProvince='" + stateOrProvince + '\'' +
+               ", stateOrProvince='" + stateCode + '\'' +
                ", postalCode='" + postalCode + '\'' +
                ", country='" + country + '\'' +
                ", countryCode='" + countryCode + '\'' +

@@ -6,5 +6,4 @@ public interface Employee {
     String getName();
     BigDecimal getGrossToDate();
     Contract getContract();
-
 }

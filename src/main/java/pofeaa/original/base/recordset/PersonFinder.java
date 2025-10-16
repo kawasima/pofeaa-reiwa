@@ -2,7 +2,6 @@ package pofeaa.original.base.recordset;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.RecordMapper;
 import pofeaa.combination.transactionscript.generated.tables.records.PersonsRecord;
 
 import java.util.Optional;
@@ -12,6 +11,9 @@ import static org.jooq.impl.DSL.table;
 import static pofeaa.combination.transactionscript.generated.Tables.PERSONS;
 import static pofeaa.combination.transactionscript.generated.Tables.RESERVATIONS;
 
+/**
+ * Table data gateway for persons table.
+ */
 public class PersonFinder {
     private final DSLContext ctx;
 

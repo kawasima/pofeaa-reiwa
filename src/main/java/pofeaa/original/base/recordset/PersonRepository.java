@@ -14,7 +14,7 @@ public class PersonRepository {
         if (record == null) {
             return null;
         }
-        return record.map(rec -> new Person(
+        return record.map(rec -> Person.of(
             rec.get("FIRST_NAME", String.class),
             rec.get("LAST_NAME", String.class)
         ));
@@ -27,7 +27,7 @@ public class PersonRepository {
         }
         return record.map(r -> {
             PersonsRecord pRec = (PersonsRecord) r;
-            return new Person(
+            return Person.of(
                 pRec.getFirstName(),
                 pRec.getLastName()
             );

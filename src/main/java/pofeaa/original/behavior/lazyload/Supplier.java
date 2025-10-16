@@ -5,12 +5,12 @@ import java.util.List;
 public class Supplier {
     private final Long id;
     private final String name;
-    private final List<Product> products;
+    private final ValueHolder<List<Product>> products;
 
-    public Supplier(Long id, String name, List<Product> products) {
+    public Supplier(Long id, String name, ProductsLoader productsLoader) {
         this.id = id;
         this.name = name;
-        this.products = products;
+        this.products = new ValueHolderImpl<>(productsLoader);
     }
 
     public Long getId() {
@@ -22,8 +22,6 @@ public class Supplier {
     }
 
     public List<Product> getProducts() {
-        if (products == null) {
-        }
-        return products;
+        return products.getValue();
     }
 }

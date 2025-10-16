@@ -1,35 +1,29 @@
 package pofeaa.original.datasource.datamapper;
 
+import pofeaa.original.datasource.PersonName;
+
 /**
  * Person Domain Class.
  * This class is always valid.
  */
-public class Person {
+public abstract sealed class Person permits OveragePerson, UnderagePerson {
     private final Identity id;
-    private final String firstName;
-    private final String lastName;
-    private final Integer numberOfDependents;
+    private final PersonName name;
+    private final int age;
 
-    public Person(Identity id, String firstName, String lastName, Integer numberOfDependents) {
+    protected Person(Identity id, PersonName name, int age) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.numberOfDependents = numberOfDependents;
+        this.name = name;
+        this.age = age;
     }
 
     public Identity getId() {
         return id;
     }
-
-    public String getFirstName() {
-        return firstName;
+    public PersonName getName() {
+        return name;
     }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public Integer getNumberOfDependents() {
-        return numberOfDependents;
+    public int getAge() {
+        return age;
     }
 }

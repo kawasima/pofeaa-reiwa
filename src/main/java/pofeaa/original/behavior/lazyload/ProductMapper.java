@@ -14,16 +14,14 @@ public class ProductMapper {
         this.ctx = ctx;
     }
 
-    public static ProductMapper create(DSLContext ctx) {
-        return new ProductMapper(ctx);
-    }
-
     public List<Product> findForSupplier(Long supplierId) {
         return ctx.select()
                 .from(table("products"))
                 .where(field("supplier_id").eq(supplierId))
                 .fetch()
-                .map(record -> new Product(
+                .map(rec -> new Product(
+                        rec.get("id", Long.class),
+                        rec.get("name", String.class),
                 ));
     }
 }

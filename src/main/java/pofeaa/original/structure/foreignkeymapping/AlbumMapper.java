@@ -9,10 +9,6 @@ import static org.jooq.impl.DSL.table;
 public class AlbumMapper extends AbstractMapper<Album> {
     private final ArtistMapper artistMapper;
 
-    protected String findStatement() {
-        return "";
-    }
-
     public AlbumMapper(DSLContext ctx, ArtistMapper artistMapper) {
         super(ctx);
         this.artistMapper = artistMapper;

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractMapper<T> {
-    abstract protected String findStatement();
     private final Map<Long, T> loadedMap = new HashMap<>();
 
     protected final DSLContext ctx;

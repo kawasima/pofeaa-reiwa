@@ -12,11 +12,6 @@ public class ArtistMapper extends AbstractMapper<Artist> {
     }
 
     @Override
-    protected String findStatement() {
-        return "SELECT * FROM artists WHERE id = ?";
-    }
-
-    @Override
     protected Artist doLoad(Long id, Record record) {
         return new Artist(
                 record.get("artist_id", Long.class),

@@ -26,7 +26,7 @@ class AddressTest {
         // Then
         assertThat(address.getLine1()).isEqualTo("123 Main Street");
         assertThat(address.getCity()).isEqualTo("New York");
-        assertThat(address.getStateOrProvince()).isEqualTo("NY");
+        assertThat(address.getStateCode()).isEqualTo("NY");
         assertThat(address.getPostalCode()).isEqualTo("10001");
         assertThat(address.getCountry()).isEqualTo("United States");
         assertThat(address.getCountryCode()).isEqualTo("US");
@@ -68,7 +68,7 @@ class AddressTest {
         assertThat(address.getLine1()).isEqualTo("10 Downing Street");
         assertThat(address.getLine2()).isNull();
         assertThat(address.getCity()).isEqualTo("London");
-        assertThat(address.getStateOrProvince()).isEqualTo("Westminster");
+        assertThat(address.getStateCode()).isEqualTo("Westminster");
         assertThat(address.getPostalCode()).isEqualTo("SW1A 2AA");
         assertThat(address.getCountry()).isEqualTo("United Kingdom");
         assertThat(address.getCountryCode()).isEqualTo("GB");
@@ -107,7 +107,7 @@ class AddressTest {
         
         // Then
         assertThat(address.getPostalCode()).isEqualTo("100-0001");
-        assertThat(address.getStateOrProvince()).isEqualTo("東京都");
+        assertThat(address.getStateCode()).isEqualTo("東京都");
         assertThat(address.getCity()).isEqualTo("千代田区");
         assertThat(address.getLine1()).isEqualTo("千代田1-1");
         assertThat(address.getCountry()).isEqualTo("Japan");

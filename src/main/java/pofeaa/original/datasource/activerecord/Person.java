@@ -5,8 +5,11 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import pofeaa.original.datasource.PersonName;
 
 import javax.sql.DataSource;
+
+import java.time.LocalDate;
 
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
@@ -18,7 +21,7 @@ import static org.jooq.impl.DSL.table;
  * it must also satisfy RDB invariants, which makes the design prone to failure.
  * </p>
  */
-public class Person {
+public sealed abstract class Person permits UnderagePerson, OveragePerson {
     private static final DataSource ds = new HikariDataSource();
     static {
         ((HikariDataSource) ds).setJdbcUrl("jdbc:h2:mem:person_test;DB_CLOSE_DELAY=-1");
@@ -27,55 +30,31 @@ public class Person {
     }
 
     private Long id;
-    private String firstName;
-    private String lastName;
-    private Integer numberOfDependents;
+    private final PersonName name;
+    private final int age;
 
     /**
      * Constructs a new Person instance with the specified attributes.
      * 
      * @param id the unique identifier for this person, may be null for new instances
-     * @param firstName the person's first name
-     * @param lastName the person's last name
-     * @param numberOfDependents the number of dependents this person has
+     * @param name the person's name
      */
-    public Person(Long id, String firstName, String lastName, Integer numberOfDependents) {
+    public Person(Long id, PersonName name, int age) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.numberOfDependents = numberOfDependents;
+        this.name = name;
+        this.age = age;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public PersonName getName() {
+        return name;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Integer getNumberOfDependents() {
-        return numberOfDependents;
-    }
-
-    public void setNumberOfDependents(Integer numberOfDependents) {
-        this.numberOfDependents = numberOfDependents;
+    public int getAge() {
+        return age;
     }
 
     /**
@@ -86,7 +65,7 @@ public class Person {
      * 
      * @return a DSLContext configured for H2 database operations
      */
-    private static DSLContext getContext() {
+    protected static DSLContext getContext() {
         return DSL.using(ds, SQLDialect.H2);
     }
 
@@ -122,57 +101,19 @@ public class Person {
      * @return a new Person instance populated with data from the record, or null if the 
      *         input record is null
      */
-    public static Person load(Record record) {
+    static Person load(Record record) {
         if (record == null) {
             return null;
         }
-        return new Person(
-                record.get(field("id"), Long.class),
-                record.get(field("first_name"), String.class),
-                record.get("last_name", String.class),
-                record.get("number_of_dependents", Integer.class)
-        );
-    }
-
-    /**
-     * Persists the current state of this Person instance to the database.
-     * 
-     * This method updates the existing database record with the current values
-     * of all mutable fields (first_name, last_name, number_of_dependents).
-     * The update is performed based on the person's ID.
-     * 
-     * @throws RuntimeException if the database update fails
-     */
-    public void update() {
-        DSLContext ctx = getContext();
-        ctx.update(table("persons"))
-                .set(field("first_name"), this.firstName)
-                .set(field("last_name"), this.lastName)
-                .set(field("number_of_dependents"), this.numberOfDependents)
-                .where(field("id").eq(this.id))
-                .execute();
-    }
-
-    /**
-     * Inserts this Person as a new record in the database.
-     * 
-     * This method creates a new record in the persons table with the current
-     * field values. Upon successful insertion, it updates this instance's ID
-     * with the auto-generated value from the database.
-     * 
-     * @throws RuntimeException if the database insert fails
-     */
-    public void insert() {
-        DSLContext ctx = getContext();
-        Record result = ctx.insertInto(table("persons"))
-                .set(field("first_name"), this.firstName)
-                .set(field("last_name"), this.lastName)
-                .set(field("number_of_dependents"), this.numberOfDependents)
-                .returning(field("id"))
-                .fetchOne();
-        
-        if (result != null) {
-            this.id = result.get(field("id"), Long.class);
+        LocalDate birthDate = record.get("birth_date", LocalDate.class);
+        int age = LocalDate.now().getYear() - birthDate.getYear();
+        if (age < 18) {
+            return UnderagePerson.load(record);
+        } else {
+            return OveragePerson.load(record);
         }
     }
+
+    public abstract void update();
+    public abstract void insert();
 }
